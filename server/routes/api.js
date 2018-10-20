@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
-const xml2js = require('xml2js');
 const transportXmlConverter = require('../utils/TransportXMLToJSONConverter');
 
 const cityCode = '217';
