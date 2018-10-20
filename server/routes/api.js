@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
+const xml2js = require('xml2js');
+const transportXmlConverter = require('../utils/TransportXMLToJSONConverter');
 
 const cityCode = '217';
 const host = 'http://timeo3.keolis.com/relais/' + cityCode + '.php';
@@ -12,8 +14,7 @@ router.get('/', function(req, res) {
 router.get('/lines', function(req, res) {
     axios.get(host + '?xml=1')
         .then(responses => {
-            // FIXME : Convert XML data to json format
-            res.json(responses.data);
+            transportXmlConverter.createLinesFromXML(responses.data, (resultLines) => (res.json(resultLines)));
         })
         .catch(err => {
             console.warn(err);
