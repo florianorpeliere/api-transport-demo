@@ -30,8 +30,26 @@ router.get('/lines', function(req, res) {
 });
 
 router.get('/stops', function(req, res) {
-    // FIXME : implement this method
-    res.json('bus / tram stops');
+
+    // Checking required parameters
+    if (!req.query.line_code || !req.query.line_direction) {
+        res.status(422).json({error: 'Missing required parameters lienCode or lineDirection'});
+    } else {
+     
+        const params = {}; 
+        params.ligne = req.query.line_code;
+        params.sens = req.query.line_direction;
+
+        axios.get(host + '?xml=1', {'params' : params})
+            .then(responses => {
+                transportXmlConverter.createStopsFromXML(responses.data, (resultLines) => (res.json(resultLines)));
+            })
+            .catch(err => {
+                console.warn(err);
+                res.status(500).json({error: 'Internal error'});
+            });
+
+    }
 });
 
 router.get('/stops/:reference/schedules', function(req, res) {
