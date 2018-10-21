@@ -11,7 +11,15 @@ router.get('/', function(req, res) {
 });
 
 router.get('/lines', function(req, res) {
-    axios.get(host + '?xml=1')
+    
+    // Retrieval of search criteria
+    const params = {};
+    if (req.query.code != null) {
+        params.ligne = req.query.code;
+    }
+    
+    // Call the web service with criteria
+    axios.get(host + '?xml=1', {'params' : params})
         .then(responses => {
             transportXmlConverter.createLinesFromXML(responses.data, (resultLines) => (res.json(resultLines)));
         })
