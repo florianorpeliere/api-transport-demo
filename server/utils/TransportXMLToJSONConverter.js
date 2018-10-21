@@ -44,14 +44,12 @@ class TransportXMLToJSONConverter {
 
     static formatStops(sourceStops) {
 
-        console.log(sourceStops);
-
         const resultStops = [];
         if (sourceStops.$.nb > 0) {
             sourceStops.als.forEach(element => {
                 const stop = TransportXMLToJSONConverter.formatStop(element.arret);
                 stop.line = TransportXMLToJSONConverter.formatLine(element.ligne);
-                stop.schedule_codes = element.refs.split('|')
+                stop.schedule_code = element.refs.split('|')[0]; // FIXME : control empty array
                 resultStops.push(stop);
             });
         }
@@ -65,6 +63,34 @@ class TransportXMLToJSONConverter {
         stop.name = sourceStop.nom;
         return stop;
 
+    } 
+
+    static createSchedulesFromXML(xml, callback) {
+
+        xml2js.parseString(xml, {trim : true, explicitArray : false}, (err, result) => {
+            const resultLines = TransportXMLToJSONConverter.formatSchedule(result.xmldata.horaires.horaire);
+            callback(resultLines);
+        });
+    }
+
+    static formatSchedule(sourceSchedule) {
+        
+        const schedule = {};
+        schedule.messages = []; // FIXME : implement this method
+
+        const resultPassages = [];
+        if (sourceSchedule.passages.$.nb > 0) {
+            sourceSchedule.passages.passage.forEach(element => {
+
+                const passage = {};
+                passage.next_arrival_time = element.duree;
+                passage.destination = element.destination;
+                resultPassages.push(passage);
+            });
+        }
+        schedule.passages = resultPassages;
+
+        return schedule;
     } 
 }
 
