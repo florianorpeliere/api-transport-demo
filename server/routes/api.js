@@ -33,7 +33,7 @@ router.get('/stops', function(req, res) {
 
     // Checking required parameters
     if (!req.query.line_code || !req.query.line_direction) {
-        res.status(422).json({error: 'Missing required parameters lienCode or lineDirection'});
+        res.status(422).json({error: 'Missing required parameters lien_code or line_direction'});
     } else {
      
         const params = {}; 
@@ -52,9 +52,15 @@ router.get('/stops', function(req, res) {
     }
 });
 
-router.get('/stops/:reference/schedules', function(req, res) {
-    // FIXME : implement this method
-    res.json('bus / tram stop schedules ' + req.params.reference);
+router.get('/schedules/:code', function(req, res) {
+    axios.get(host + '?xml=3&ran=1', {'params' : {'refs' : req.params.code}})
+        .then(responses => {
+            transportXmlConverter.createSchedulesFromXML(responses.data, (resultLines) => (res.json(resultLines)));
+        })
+        .catch(err => {
+            console.warn(err);
+            res.status(500).json({error : 'Internal error'});
+        });
 });
 
 module.exports = router;
