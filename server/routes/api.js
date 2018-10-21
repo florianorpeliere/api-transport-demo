@@ -33,7 +33,7 @@ router.get('/stops', function(req, res) {
 
     // Checking required parameters
     if (!req.query.line_code || !req.query.line_direction) {
-        res.status(422).json({error: 'Missing required parameters lienCode or lineDirection'});
+        res.status(422).json({error: 'Missing required parameters lien_code or line_direction'});
     } else {
      
         const params = {}; 
