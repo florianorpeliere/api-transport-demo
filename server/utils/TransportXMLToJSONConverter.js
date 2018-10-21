@@ -90,6 +90,12 @@ class TransportXMLToJSONConverter {
         }
         schedule.passages = resultPassages;
 
+        // FIXME : Factorize this method
+        schedule.stop = {
+            'code' : sourceSchedule.description.code,
+            'name' : sourceSchedule.description.arret
+        }
+
         return schedule;
     } 
 }
